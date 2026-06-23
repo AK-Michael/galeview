@@ -32,6 +32,16 @@ VITE_API_KEY=your_openweathermap_api_key
 
 Free keys are available at [openweathermap.org/api](https://openweathermap.org/api).
 
+### Deploying on Vercel
+
+Add this environment variable in your Vercel project settings (then redeploy):
+
+```
+OPENWEATHER_API_KEY=your_openweathermap_api_key
+```
+
+The production build calls `/api/weather` and `/api/forecast` serverless routes so the key stays on the server and is read at runtime — not baked into the client bundle.
+
 ```bash
 npm run dev
 ```

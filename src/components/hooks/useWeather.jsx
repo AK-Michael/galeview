@@ -5,6 +5,30 @@ const filterForecast = (forecastData) =>
     .filter((item) => item.dt_txt.includes("12:00:00"))
     .slice(0, 3);
 
+const parseError = async (res, fallback) => {
+  try {
+    const data = await res.json();
+    if (data?.message) return data.message;
+  } catch {
+    // response body was not JSON
+  }
+
+  if (res.status === 401) return "Weather API key is invalid or missing.";
+  if (res.status === 404) return "Location not found.";
+  return fallback;
+};
+
+const buildRequest = (endpoint, API_KEY, unit, location) => {
+  const params = new URLSearchParams({ units: unit, ...location });
+
+  if (import.meta.env.PROD) {
+    return `/api/${endpoint}?${params}`;
+  }
+
+  params.set("appid", API_KEY);
+  return `https://api.openweathermap.org/data/2.5/${endpoint}?${params}`;
+};
+
 const useWeather = (API_KEY, unit) => {
   const [weatherData, setWeatherData] = useState(null);
   const [forecast, setForecast] = useState([]);
@@ -13,22 +37,33 @@ const useWeather = (API_KEY, unit) => {
 
   const fetchWeatherHandler = useCallback(
     async (city) => {
+      if (!import.meta.env.PROD && !API_KEY) {
+        setError("Add VITE_API_KEY to your .env file for local development.");
+        return;
+      }
+
       setLoading(true);
       setError(null);
       setForecast([]);
 
       try {
+        const location = { q: city };
         const [currentRes, forecastRes] = await Promise.all([
-          fetch(
-            `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${API_KEY}&units=${unit}`
-          ),
-          fetch(
-            `https://api.openweathermap.org/data/2.5/forecast?q=${encodeURIComponent(city)}&appid=${API_KEY}&units=${unit}`
-          ),
+          fetch(buildRequest("weather", API_KEY, unit, location)),
+          fetch(buildRequest("forecast", API_KEY, unit, location)),
         ]);
 
-        if (!currentRes.ok || !forecastRes.ok)
-          throw new Error("Location not found");
+        if (!currentRes.ok) {
+          throw new Error(
+            await parseError(currentRes, "Location not found.")
+          );
+        }
+
+        if (!forecastRes.ok) {
+          throw new Error(
+            await parseError(forecastRes, "Forecast unavailable for this location.")
+          );
+        }
 
         const currentData = await currentRes.json();
         const forecastData = await forecastRes.json();
@@ -48,22 +83,33 @@ const useWeather = (API_KEY, unit) => {
 
   const fetchWeatherByCoords = useCallback(
     async (lat, lon) => {
+      if (!import.meta.env.PROD && !API_KEY) {
+        setError("Add VITE_API_KEY to your .env file for local development.");
+        return;
+      }
+
       setLoading(true);
       setError(null);
       setForecast([]);
 
       try {
+        const location = { lat: String(lat), lon: String(lon) };
         const [currentRes, forecastRes] = await Promise.all([
-          fetch(
-            `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=${unit}`
-          ),
-          fetch(
-            `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=${unit}`
-          ),
+          fetch(buildRequest("weather", API_KEY, unit, location)),
+          fetch(buildRequest("forecast", API_KEY, unit, location)),
         ]);
 
-        if (!currentRes.ok || !forecastRes.ok)
-          throw new Error("Failed to fetch weather for your location");
+        if (!currentRes.ok) {
+          throw new Error(
+            await parseError(currentRes, "Failed to fetch weather for your location.")
+          );
+        }
+
+        if (!forecastRes.ok) {
+          throw new Error(
+            await parseError(forecastRes, "Forecast unavailable for your location.")
+          );
+        }
 
         const currentData = await currentRes.json();
         const forecastData = await forecastRes.json();
