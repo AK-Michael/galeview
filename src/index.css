@@ -1,0 +1,64 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+:root {
+  --font-display: "Sora", system-ui, sans-serif;
+  --font-body: "DM Sans", system-ui, sans-serif;
+
+  --text-primary: rgba(255, 255, 255, 0.94);
+  --text-secondary: rgba(255, 255, 255, 0.62);
+  --text-muted: rgba(255, 255, 255, 0.38);
+
+  --surface: rgba(255, 255, 255, 0.07);
+  --surface-hover: rgba(255, 255, 255, 0.11);
+  --surface-raised: rgba(255, 255, 255, 0.1);
+  --border: rgba(255, 255, 255, 0.13);
+  --border-strong: rgba(255, 255, 255, 0.22);
+
+  --accent: #e8b84a;
+  --accent-soft: rgba(232, 184, 74, 0.14);
+
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-full: 999px;
+
+  --blur: 18px;
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.22);
+  --shadow-sm: 0 2px 12px rgba(0, 0, 0, 0.14);
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration: 0.35s;
+
+  --max-width: 1080px;
+}
+
+html {
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  background-color: #0c0e14;
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+#root {
+  min-height: 100dvh;
+}
+
+button,
+input {
+  font-family: inherit;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
