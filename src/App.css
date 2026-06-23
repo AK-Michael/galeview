@@ -37,8 +37,7 @@
   background-image: url("/images/clouds.jpg");
 }
 
-.weather-rain,
-.weather-drizzle {
+.weather-rain {
   background-image: url("/images/rain.jpg");
 }
 

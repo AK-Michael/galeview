@@ -5,9 +5,8 @@ const getWeatherClass = (main) => {
     case "clouds":
       return "weather-clouds";
     case "rain":
-      return "weather-rain";
     case "drizzle":
-      return "weather-drizzle";
+      return "weather-rain";
     case "thunderstorm":
       return "weather-thunderstorm";
     case "snow":
