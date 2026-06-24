@@ -2,6 +2,8 @@
 
 A weather app built with React and Vite. Search any city, use your current location, and get current conditions, a three-day forecast, and a map for where you're looking.
 
+**Live demo:** [galeview.vercel.app](https://galeview.vercel.app)
+
 ## What it does
 
 - City search and browser geolocation
